@@ -1,0 +1,4 @@
+# this folder and its subfolders contain only binary data
+*.asc text
+*.md text
+* binary
