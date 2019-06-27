@@ -1,4 +1,5 @@
 #! /bin/sh
+# SPDX-License-Identifier: GPL-2.0-or-later
 ####################################################################################
 #                                                                                  #
 # sign a tar archive with our private RSA key                                      #
@@ -139,7 +140,6 @@ checksum()
 		printf "%d" $sum
 	}
 	sum=0
-	cp "$1" /var/tmp/savedheader
 	cmp -l -- "$1" /dev/zero 2>/dev/null | read_values
 }
 ####################################################################################
@@ -168,7 +168,7 @@ is_fritzos_environment()
 # check parameters                                                                 #
 #                                                                                  #
 ####################################################################################
-if [ -z $1 ]; then
+if [ -z "$1" ]; then
 		usage 1>&2
 		exit 1
 else
@@ -240,6 +240,16 @@ else
 fi
 ####################################################################################
 #                                                                                  #
+# use 'force-local' option with GNU TAR, if the image name contains a colon        #
+#                                                                                  #
+####################################################################################
+if [ -n "$(expr "$image_file" : ".*\(:\).*")" ]; then
+	"$YF_SIGNIMAGE_TAR" --help 2>&1 | grep -q 'force-local' 2>/dev/null && force_local="--force-local"
+else
+	force_local=""
+fi
+####################################################################################
+#                                                                                  #
 # verify input file format                                                         #
 #                                                                                  #
 ####################################################################################
@@ -267,7 +277,7 @@ trap "rm -r \"$tmp\"" EXIT HUP
 #                                                                                  #
 ####################################################################################
 offset=0
-"$YF_SIGNIMAGE_TAR" -t -v -f "$image_file" |
+"$YF_SIGNIMAGE_TAR" -t -v -f "$image_file" $force_local |
 sed -n -e "s|^[^ ]* *[^ ]* *\([0-9]*\) *[^ ]* *[^ ]* *\(.*\)\$|SIZE=\1 MEMBER=\2|p" |
 while read line; do
 	eval $line
@@ -371,7 +381,6 @@ mkdir -p "$tmp/var"
 # needed                                                                           #
 #                                                                                  #
 ####################################################################################
-fill_blocks=0
 if [ $(( ( copy_blocks + 2 ) % 20 )) -eq 0 ]; then
 	echo -ne "Repeating first entry as filler ... " 1>&2
 	"$YF_SIGNIMAGE_DD" if="$image_file" of="$tmp/filler.bin" bs=512 count=1 status=none 2>/dev/null
