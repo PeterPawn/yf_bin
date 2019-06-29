@@ -1,1 +1,1 @@
-../3.10.107/tvi.sig
+../../common/tvi.sig

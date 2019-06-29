@@ -1,1 +1,1 @@
-../3.10.107/waitconnected.sig
+../../common/waitconnected.sig

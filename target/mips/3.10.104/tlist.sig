@@ -1,1 +1,1 @@
-../3.10.107/tlist.sig
+../../common/tlist.sig

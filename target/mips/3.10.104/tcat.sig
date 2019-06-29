@@ -1,1 +1,1 @@
-../3.10.107/tcat.sig
+../../common/tcat.sig

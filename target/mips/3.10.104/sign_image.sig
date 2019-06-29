@@ -1,1 +1,1 @@
-../3.10.107/sign_image.sig
+../../common/sign_image.sig

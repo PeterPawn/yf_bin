@@ -1,1 +1,1 @@
-../3.10.107/waittimeset.sig
+../../common/waittimeset.sig

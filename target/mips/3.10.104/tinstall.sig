@@ -1,1 +1,1 @@
-../3.10.107/tinstall.sig
+../../common/tinstall.sig

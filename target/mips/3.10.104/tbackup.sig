@@ -1,1 +1,1 @@
-../3.10.107/tbackup.sig
+../../common/tbackup.sig

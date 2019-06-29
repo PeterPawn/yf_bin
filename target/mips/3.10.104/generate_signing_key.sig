@@ -1,1 +1,1 @@
-../3.10.107/generate_signing_key.sig
+../../common/generate_signing_key.sig

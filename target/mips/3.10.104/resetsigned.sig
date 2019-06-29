@@ -1,1 +1,1 @@
-../3.10.107/resetsigned.sig
+../../common/resetsigned.sig
