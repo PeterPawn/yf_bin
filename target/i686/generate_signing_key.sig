@@ -1,1 +1,0 @@
-../common/generate_signing_key.sig
