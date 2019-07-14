@@ -86,7 +86,7 @@ usage()
 get_files_to_copy()
 {
 	cat << END_OF_LIST
-sbin/mksquashfs=$1/$2/mksquashfs4
+sbin/mksquashfs=$1/$2/mksquashfs
 sbin/unsquashfs=$1/$2/unsquashfs
 bin/busybox=$1/$2/busybox
 usr/bin/openssl=$1/$2/openssl
