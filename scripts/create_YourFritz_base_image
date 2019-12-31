@@ -12,7 +12,7 @@
 #                                                                                                     #
 ###################################################################################################CPY#
 #                                                                                                     #
-# Copyright (C) 2016-2019 P.Hämmerlein (peterpawn@yourfritz.de)                                       #
+# Copyright (C) 2016-2020 P.Hämmerlein (peterpawn@yourfritz.de)                                       #
 #                                                                                                     #
 ###################################################################################################LIC#
 #                                                                                                     #
@@ -62,7 +62,7 @@ __yourfritz__="$(printf "\033[0m\033[36mY\\033[0m\033[1mour\033[0m\033[36mF\033[
 usage()
 {
 	printf -- "Create a basic image for %s users, containing files not present in stock firmware.\n\n" "$__yourfritz__"
-	printf -- "Copyright (C) 2016-2019 P.Hämmerlein (peterpawn@yourfritz.de)\n\n"
+	printf -- "Copyright (C) 2016-2020 P.Hämmerlein (peterpawn@yourfritz.de)\n\n"
 	printf -- "Usage:\n\n"
 	printf -- "%s <architecture> <processor> <kernel_version> <libc_version>\n\n" "$(__bold "$0")"
 	printf -- "Parameters:\n"
@@ -231,7 +231,7 @@ cat > "$stage_var/content.txt" << END_OF_DESC
 Project: $project
 Path: /var/$project
 Component: $marker
-Copyright: (C) 2016-2019 Peter Haemmerlein (peterpawn@yourfritz.de)
+Copyright: (C) 2016-2020 Peter Haemmerlein (peterpawn@yourfritz.de)
 License: see ${add_license##*/} file
 Content:
 END_OF_DESC
