@@ -1,0 +1,18 @@
+#! /bin/sh
+# vim: set tabstop=4 syntax=sh :
+# SPDX-License-Identifier: GPL-2.0-or-later
+arch=$(uname -m)
+[ "$(expr "$0" : "^\(.\).*\$")" = "/" ] && path="${0%/*}" || path="./${0%/*}"
+if [ -d "$path/$arch" ]; then
+	archpath="$path/$arch"
+	tool="${0##*/}"
+	if [ -x "$archpath/$tool" ]; then
+		$archpath/$tool $*
+	else
+		printf "Binary '%s' is missing for platform '%s', even while it's supported per se.\n\a" "$tool" "$arch" 1>&2
+		exit 1
+	fi
+else
+	printf "Platform '%s' is not supported, binaries not present.\n\a" "$arch" 1>&2
+	exit 1
+fi
