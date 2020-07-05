@@ -21,21 +21,20 @@ In the future you may refresh the content of your `bin` sub-directory (if necess
 |
 +- squashfs -+-                                - shell scripts to detect the needed architecture of SquashFS binaries and to call them
 |            |
-|            +- armv7l                         - unpack/pack binaries for ARMv7 (LE) architecture (e.g. Raspberry Pi)
+|            +- armv7l                         - unpack/pack binaries for ARMv7 (LE) architecture, using glibc library dynamically (e.g. Raspberry Pi), 
 |            |
-|            +- i686                           - unpack/pack binaries for Intel 80386 architecture (nearly each Intel or AMD processor with 32-bit support)
+|            +- i686                           - unpack/pack binaries for Intel 80386 architecture, statically linked with uClibc-ng
 |            |
-|            +- mips                           - unpack/pack binaries for MIPS32r2 (BE) architecture (most FRITZ!Box devices with Lantiq/Intel or Ikanos processor)
+|            +- mips                           - unpack/pack binaries for MIPS32r2 (BE) architecture, statically linked with uClibc-ng,
+|            |                                   (usable on most FRITZ!Box devices with Lantiq/Intel or Ikanos processor)
 |            |
-|            +- x86_64                         - unpack/pack binaries for Intel-compatible 64-bit architecture
+|            +- x86_64                         - unpack/pack binaries for Intel-compatible 64-bit architecture, using glibc library dynamically
 |
--- target ---+- mips ---+- 3.10.73             - precompiled binaries for MIPS-based devices with 3.10.73 kernel (up to FRITZ!OS version 07.0x)
+-- target ---+- mips ---+- 3.10.73             - some recompiled binaries for MIPS-based devices with 3.10.73 kernel (up to FRITZ!OS version 07.0x)
              |          |
-             |          +- 3.10.107 / 3.10.104 - precompiled binaries for MIPS-based devices with 3.10.10x kernel (starts with FRITZ!OS 07.0x)
+             |          +- 3.10.107 / 3.10.104 - some precompiled binaries for MIPS-based devices with 3.10.10x kernel (starts with FRITZ!OS 07.0x)
              |
-             +- i686                           - precompiled binaries for PUMA6-based devices (only for their ATOM)
+             +- i686                           - some precompiled binaries for PUMA6-based devices (only for their ATOM core and possibly with special ATOM instructions)
 ```
 
 The binaries for target devices are (usually) linked statically, to make them usable without any further prerequisites. For MIPS architectures there're two different branches, because AVM starts to use the uClibc-ng instead of the older uClibc (0.9.3x) from FRITZ!OS version 07.0x on.
-
-The binaries for SquashFS handling are linked statically only for the MIPS architecture, all other architectures need the correct libraries (glibc (or a compatible one) and libz), too.
