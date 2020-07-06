@@ -30,9 +30,11 @@ In the future you may refresh the content of your `bin` sub-directory (if necess
 |            |
 |            +- x86_64                         - unpack/pack binaries for Intel-compatible 64-bit architecture, using glibc library dynamically
 |
--- target ---+- mips ---+- 3.10.73             - some recompiled binaries for MIPS-based devices with 3.10.73 kernel (up to FRITZ!OS version 07.0x)
+-- target ---+- mips ---+- 3.10.73             - some precompiled binaries for MIPS-based devices with 3.10.73 kernel (up to FRITZ!OS version 07.0x)
              |          |
              |          +- 3.10.107 / 3.10.104 - some precompiled binaries for MIPS-based devices with 3.10.10x kernel (starts with FRITZ!OS 07.0x)
+             |          |
+             |          +- 2.6.28.10           - some precompiled binaries for MIPS-based devices with 2.6.28.10 kernel (especially FRITZ!Box 7390)
              |
              +- i686                           - some precompiled binaries for PUMA6-based devices (only for their ATOM core and possibly with special ATOM instructions)
 ```
