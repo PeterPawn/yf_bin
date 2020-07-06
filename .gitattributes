@@ -1,4 +1,4 @@
 *.asc text diff
-*.md text diff
+README.md text diff
 .gitattributes text diff
 * binary

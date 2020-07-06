@@ -21,7 +21,7 @@ In the future you may refresh the content of your `bin` sub-directory (if necess
 |
 +- squashfs -+-                                - shell scripts to detect the needed architecture of SquashFS binaries and to call them
 |            |
-|            +- armv7l                         - unpack/pack binaries for ARMv7 (LE) architecture, using glibc library dynamically (e.g. Raspberry Pi), 
+|            +- armv7l                         - unpack/pack binaries for ARMv7 (LE) architecture, statically linked with uClibc-ng
 |            |
 |            +- i686                           - unpack/pack binaries for Intel 80386 architecture, statically linked with uClibc-ng
 |            |
