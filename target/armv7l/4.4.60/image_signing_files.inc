@@ -1,0 +1,1 @@
+../../common/image_signing_files.inc
