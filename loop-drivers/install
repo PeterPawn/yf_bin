@@ -1,0 +1,42 @@
+#! /bin/sh
+# vim: set tabstop=4 syntax=sh :
+# SPDX-License-Identifier: GPL-2.0-or-later
+#
+rlnm() (
+	if command -v realpath >/dev/null; then
+		realpath "$1"
+	elif command -v readlink >/dev/null; then
+		readlink -f "$1"
+	else
+		p="$1"
+		l="$(ls -dl "$p")"
+		t="${l#*" $p -> "}"
+		d="$(pwd)"
+		cd "${p%/*}"
+		cd -P "${t%/*}"
+		r="$(pwd)/${t##*/}"
+		cd "$d"
+		printf -- "%s\n" "$r"
+	fi
+)
+#
+tgt="/var"
+tnam="loop.ko"
+tmsk="555"
+bdir="$(rlnm "$0")"
+bdir="${bdir%/*}/drivers"
+lkmm="%s/loop-%s-%s.ko"
+arch="$(uname -m)"
+kver="$(uname -r)"
+lkm="$(printf -- "$lkmm" "$bdir" "$arch" "$kver")"
+#
+if [ -f "$lkm" ]; then
+	cp "$lkm" "$tgt/$tnam"
+	chmod "$tmsk" "$tgt/$tnam"
+	exit 0
+else
+	printf -- "Unable to find a proper loop driver for block devices.\n" 1>&2
+	exit 1
+fi
+#
+# remaining files get deleted prior to next tr069fwupdate download automatically
