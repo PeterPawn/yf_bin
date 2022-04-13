@@ -1,0 +1,169 @@
+#! /bin/bash
+# SPDX-License-Identifier: GPL-2.0-or-later
+#######################################################################################################
+#                                                                                                     #
+# generate YourFritz loop driver archive for FRITZ!Box models without an own loop driver for block    #
+# devices                                                                                             #
+#                                                                                                     #
+###################################################################################################VER#
+#                                                                                                     #
+# create_YourFritz_loop_driver_archive, version 0.6                                                   #
+#                                                                                                     #
+# This script is a part of the YourFritz project from https://github.com/PeterPawn/YourFritz.         #
+#                                                                                                     #
+###################################################################################################CPY#
+#                                                                                                     #
+# Copyright (C) 2016-2022 P.Hämmerlein (peterpawn@yourfritz.de)                                       #
+#                                                                                                     #
+###################################################################################################LIC#
+#                                                                                                     #
+# This program is free software; you can redistribute it and/or modify it under the terms of the GNU  #
+# General Public License as published by the Free Software Foundation; either version 2 of the        #
+# License, or (at your option) any later version.                                                     #
+#                                                                                                     #
+# This program is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without   #
+# even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU      #
+# General Public License under http://www.gnu.org/licenses/gpl-2.0.html for more details.             #
+#                                                                                                     #
+#######################################################################################################
+#                                                                                                     #
+# constants                                                                                           #
+#                                                                                                     #
+#######################################################################################################
+project="${YF_PROJECT_NAME:-YourFritz}"
+marker="loop-driver-archive"
+image="$project-$marker"
+outer_image_mask="\$image"
+yourfritz="$GITHOME/YourFritz"
+basedir="$GITHOME/yf_bin/loop-drivers"
+sign_image="$yourfritz/signimage/sign_image"
+check_signed_image="$yourfritz/signimage/check_signed_image"
+add_license="$basedir/LICENSE"
+add_info="$basedir/README.md"
+__bold__="$(printf "\033[1m")"
+__undl__="$(printf "\033[4m")"
+__red__="$(printf "\033[1m\033[31m")"
+__gren__="$(printf "\033[1m\033[32m")"
+__yllw__="$(printf "\033[1m\033[33m")"
+__blue__="$(printf "\033[1m\033[34m")"
+__rset__="$(printf "\033[0m")"
+__bold() { printf "$__bold__"; printf -- "$@"; printf "$__rset__"; }
+__undl() { printf "$__undl__"; printf -- "$@"; printf "$__rset__"; }
+__yourfritz__="$(printf "\033[0m\033[36mY\\033[0m\033[1mour\033[0m\033[36mF\033[0m\033[1mritz\033[0m")"
+#######################################################################################################
+#                                                                                                     #
+# subfunctions                                                                                        #
+#                                                                                                     #
+#######################################################################################################
+#                                                                                                     #
+# usage screen                                                                                        #
+#                                                                                                     #
+#######################################################################################################
+usage()
+{
+	printf -- "Create a basic image for %s users, containing files not present in stock firmware.\n\n" "$__yourfritz__"
+	printf -- "Copyright (C) 2016-2020 P.Hämmerlein (peterpawn@yourfritz.de)\n\n"
+	printf -- "Usage:\n\n"
+	printf -- "%s <architecture> <processor> <kernel_version> <libc_version>\n\n" "$(__bold "$0")"
+	printf -- "Parameters:\n"
+	printf -- "%s - processor architecture\n" "$(__bold "architecture")"
+	printf -- "- used to locate the the proper binaries from 'yf_bin' sub-directories\n\n"
+	printf -- "%s - processor name\n" "$(__bold "processor")"
+	printf -- "- used as part of the target image name\n\n"
+	printf -- "%s - Linux kernel version\n" "$(__bold "kernel_version")"
+	printf -- "- used to locate the proper binaries and as part of the target image name\n\n"
+	printf -- "%s - C library version\n" "$(__bold "libc_version")"
+	printf -- "- used to locate the proper binaries and as part of the target image name\n\n"
+	printf -- "The environment variable '%s' may contain a preset password value for\n" "$(__bold "SIGNIMAGE_PASSWORD")"
+	printf -- "the key used to sign the image. If it's present, no question on console is emitted.\n"
+	printf -- "The location of the key files is set via 'signimage' sub-project settings.\n"
+}
+#######################################################################################################
+#                                                                                                     #
+# check parameters                                                                                    #
+#                                                                                                     #
+#######################################################################################################
+# build outer image name
+eval outer_image="$outer_image_mask"
+#######################################################################################################
+#                                                                                                     #
+# prepare working directory                                                                           #
+#                                                                                                     #
+#######################################################################################################
+tmp="${TMPDIR:-/tmp}"
+tmpdir="$tmp/yf_loop_$$"
+stage="$tmpdir/stage"
+stage_var="$tmpdir/var"
+mkdir -p "$stage_var/drivers" 2>/dev/null
+#######################################################################################################
+#                                                                                                     #
+# copy drivers directory to staging directory, add install script                                     #
+#                                                                                                     #
+#######################################################################################################
+cp -a "$basedir/drivers/"* "$stage_var/drivers/"
+cat "$basedir/install" > "$stage_var/install"
+chmod 555 "$stage_var/install" 2>/dev/null
+sudo chown root:root "$stage_var/install" 2>/dev/null
+#######################################################################################################
+#                                                                                                     #
+# add information file and license, if needed                                                         #
+#                                                                                                     #
+#######################################################################################################
+if [ -n "$add_license" ]; then
+	cp -a -L "$add_license" "$stage_var"
+	chmod 444 "$stage_var/${add_license##*/}" 2>/dev/null
+	sudo chown root:root "$stage_var/${add_license##*/}" 2>/dev/null
+fi
+if [ -n "$add_info" ]; then
+	cp -a -L "$add_info" "$stage_var"
+	chmod 444 "$stage_var/${add_info##*/}" 2>/dev/null
+	sudo chown root:root "$stage_var/${add_info##*/}" 2>/dev/null
+fi
+#######################################################################################################
+#                                                                                                     #
+# add description file                                                                                #
+#                                                                                                     #
+#######################################################################################################
+cat > "$stage_var/content.txt" << END_OF_DESC
+Project: $project
+Path: /var/[packet/]$project
+Component: $marker
+Copyright: (C) 2016-2022 Peter Haemmerlein (peterpawn@yourfritz.de)
+License: see ${add_license##*/} file
+Content:
+END_OF_DESC
+ls -l "$stage_var" >> "$stage_var/content.txt"
+chmod 444 "$stage_var/content.txt" 2>/dev/null
+sudo chown root:root "$stage_var/content.txt" 2>/dev/null
+#######################################################################################################
+#                                                                                                     #
+# create unsigned image and sign it with the YourFritz key                                            #
+#                                                                                                     #
+#######################################################################################################
+busybox tar -c -f "$tmpdir/$outer_image.image.unsigned" -C "$tmpdir" ./var
+sign_image="$(which sign_image)"
+name_prefix="$HOME/$project" YF_SIGNIMAGE_TAR="busybox tar" "$sign_image" "$tmpdir/$outer_image.image.unsigned" "${SIGNIMAGE_PASSWORD}" > "$basedir/$outer_image.image"
+sign_rc=$?
+#######################################################################################################
+#                                                                                                     #
+# remove temporary files                                                                              #
+#                                                                                                     #
+#######################################################################################################
+rm -r "$tmpdir" 2>/dev/null
+#######################################################################################################
+#                                                                                                     #
+# verify signature, if signing process was successful                                                 #
+#                                                                                                     #
+#######################################################################################################
+[ $sign_rc -eq 0 ] && "$check_signed_image" "$packages/$outer_image.image" -a "$HOME/$project.asc"
+#######################################################################################################
+#                                                                                                     #
+# finish and regular exit                                                                             #
+#                                                                                                     #
+#######################################################################################################
+exit $sign_rc
+#######################################################################################################
+#                                                                                                     #
+# end of script                                                                                       #
+#                                                                                                     #
+#######################################################################################################
