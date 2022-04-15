@@ -31,8 +31,10 @@ kver="$(uname -r)"
 lkm="$(printf -- "$lkmm" "$bdir" "$arch" "$kver")"
 #
 if [ -f "$lkm" ]; then
+	printf -- "Copying file %s to %s.\n" "$lkm" "$tgt/$tnam" 1>&2
 	cp "$lkm" "$tgt/$tnam"
 	chmod "$tmsk" "$tgt/$tnam"
+	ls -l "$tgt/$tnam"
 	exit 0
 else
 	printf -- "Unable to find a proper loop driver for block devices.\n" 1>&2
